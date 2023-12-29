@@ -1,0 +1,35 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:password@localhost:8761/eureka/
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: product-service
+            uri: lb://product-service/**
+            predicates:
+              - Path=/api/product/**
+            filters:
+          - id: order-service
+            uri: lb://order-service
+            predicates:
+              - Path=/api/order/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/spring-cloud-microservice
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: trace
+          route:
+            RoutePredicateFactory: info
+    root: info
